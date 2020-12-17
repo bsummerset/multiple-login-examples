@@ -12,6 +12,7 @@ const FileStore = require('session-file-store')(session);
 const homeController = require('./controllers/home');
 const userRouter = require('./routers/user');
 const { requireLogin } = require('./auth')
+const ideasRouter = require('./routers/dinnerideas');
 
 const app = express();
 const server = http.createServer(app);
@@ -49,15 +50,22 @@ app.get('/', homeController.home);
 
 app.use('/users', userRouter);
 
+app.use(requireLogin);
+
 app.get('/members-only', requireLogin, (req, res) => {
     console.log(req.session.user);
     const { username } = req.session.user;
     res.send(`
 
-<h1>Hi ${username}!</h1>
-<a href="/users/logout">Log out</a>
+    <h1>Hi ${username}!</h1>
+    <a href=:"/dinnerideas/new">View Dinner Ideas List</a>
+    <br>
+    <a href="/users/logout">Log out</a>
     `);
 });
+
+app.use('/dinnerideas', ideasRouter);
+
 
 app.get('/unauthorized', (req, res) => {
     res.send(`You shall not pass!`);

@@ -62,7 +62,8 @@ const processLogin = async (req, res) => {
         if (isValid) {
             console.log('password is good!');
             req.session.user = {
-                username
+                username,
+                id: user.id
             };
             req.session.save(() => {
                 res.redirect('/members-only');                
