@@ -121,23 +121,32 @@ app.post('/login', async (req, res) => {
     username = normalize(username);
     // Get the user by the username
     const user = await User.findOne({
+        // specify a "where clause"
         where: {
             username
+            // equiv to username: username
         }
     });
+    // if not found, then user will be "falsey" if not found
     if (user) {
         console.log('valid user...checking password');
+        // Use the bcrypt library to check the password
+        // Store hashes, not passwords!!!!!!!!!
+        // A hash is a one-way encrypted version of the password.
+
+        // Variables that start with `is` or `has` usually means boolean.
         const isValid = bcrypt.compareSync(password, user.hash);
+        // Now, the condition reads like English: "if is valid? then..."
         if (isValid) {
             console.log('password is good!');
             res.redirect('/members-only');
         } else {
             console.log('but password is wrong');
-            res.redirect('/login');    
+            res.redirect('/login');
         }
     } else {
         console.log('not a valid user');
-        res.redirect('/login');    
+        res.redirect('/login');
     }
 });
 
