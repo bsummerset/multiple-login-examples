@@ -45,24 +45,49 @@ app.get('/new', (req, res) => {
     `);
 });
 
+const normalize = str => str.trim().toLowerCase();
+const isLongEnough = str => str.length > 6;
+const isNotBlank = str => str != '';
+
+
 app.post('/new', async (req, res) => {
-    const { username, password } = req.body;
-    console.log(username, password);
+    // let { username, password } = req.body;
+    let { username } = req.body;
+    const {password} = req.body;
+    // trim the whitespace
+    // username = username.trim();
+    // make lowercase
+    // username = username.toLowerCase();
+
+    // Using our utility function
+    username = normalize(username);
+
+    console.log(username, password); //BAD! Don't console.log() plain text passwords!
     if (username == '' || password == '') {
         // Really should give the user a message
         console.log('username or password is blank');
         res.redirect('/new');
     } else {
-        const salt = bcrypt.genSaltSync(10);
+        //salty hashbrowns!!
+        //A "salt" is a String that helps bcrypt randomize the scrambled vrsion
+        //of your password
+        const salt = bcrypt.genSaltSync(10); // 10 is good. 20 is too high. 5 is too low.
+                                            // This num is how many "salt rounds"
+                                            //that is, how many times it re-randomize
+        // Use the salt to create the hash
         const hash = bcrypt.hashSync(password, salt);
         try {
             const newUser = await User.create({
-                username,
-                hash
+                          // Attributes
+                username, //user: username
+                hash      // hash: hash
             });
             res.redirect('/login');                        
         } catch (e) {
             // e.name will be "SequelizeUniqueConstraintError"
+            // e is a JavaScript Error object.
+            // Error objects hav a .name
+            // e is abbreviation for Error
 
             if (e.name === "SequelizeUniqueConstraintError") {
                 // We should tell the user that the username is taken
@@ -92,7 +117,8 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
+    let { username, password } = req.body;
+    username = normalize(username);
     // Get the user by the username
     const user = await User.findOne({
         where: {

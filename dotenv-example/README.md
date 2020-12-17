@@ -1,9 +1,10 @@
 # Using dotenv to hide your secrets
+# N
 
 `.env` should be part of your .gitignore:
 
 ```sh
-echo ".env" >> .gitignore
+echo ".env" >> .gitignore # creates if it does not exist, otherwise appends!
 git add .gitignore
 git commit -am 'ignores .env'
 ```
@@ -18,7 +19,7 @@ npm i dotenv
 At the top of `index.js`
 
 ```js
-require('dotenv').config();
+require('dotenv').config(); // loads your info from the .env file in your project
 ```
 
 
@@ -72,7 +73,8 @@ DB_PASSWORD=abcdef
 DB_NAME=abcdef
 DB_HOST=abc.elephantsql.com
 ```
-
+Make sure there are NO SPACES before or after the `=`.
+This isn't JavaScript, it's "shell".
 Use the values correct values, of course. 
 
 
