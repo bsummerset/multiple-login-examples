@@ -50,6 +50,7 @@ app.get('/', homeController.home);
 
 app.use('/users', userRouter);
 
+
 app.use(requireLogin);
 
 app.get('/members-only', requireLogin, (req, res) => {
